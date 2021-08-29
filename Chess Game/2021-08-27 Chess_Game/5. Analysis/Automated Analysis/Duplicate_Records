@@ -1,0 +1,37 @@
+The table contained a lot of duplications.
+1. First, Duplicate touples existed which were dealt with an SQL Query
+	SELECT COUNT(*) FROM (
+		SELECT DISTINCT * FROM [tmp_Chess_Game]
+	) AS tmp
+	
+2. There were many duplicates from the Game id column where the enteries for remaining columns were same, the only difference being some column entries were lower cased, some Sentenced case. Also, the 'created_at' column for some entries were whole integers while some had an exponential form of the entry.
+--The solution used was the game ids whose count was 1 were directly transferred to the new table 
+--The entries with more than 1 count, a condition was added where the 'created_at' column with the proper whole integer (not in the exponential form). For example, a entry with created_at = 1503502358761 was chosen in place of 1.503502E+12.
+SQL Query used to do this was:
+	
+	SELECT * 
+INTO [Chess_Game]
+FROM (
+	SELECT DISTINCT * FROM [tmp_Chess_Game]
+) AS tmp
+WHERE [id] IN (
+	SELECT [id] FROM (
+	SELECT DISTINCT * FROM [tmp_Chess_Game]
+) AS tmp
+GROUP BY [id]
+HAVING COUNT([id]) = 1
+)
+OR
+(
+[id] IN (
+SELECT [id] FROM (
+	SELECT DISTINCT * FROM [tmp_Chess_Game]
+) AS tmp
+GROUP BY [id]
+HAVING COUNT([id]) > 1
+) 
+AND 
+[created_at]  NOT LIKE '%+%'
+)
+
+--19114 rows affected

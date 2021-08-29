@@ -1,0 +1,10 @@
+The first entry in the dataset contained all the missing values.
+Row Number 1:
+id	rated	created_at	last_move_at	turns	victory_status	winner	increment_code	white_id	white_rating	black_id	black_rating	moves	opening_eco	opening_name	opening_ply
+ 				0					0		0				
+				
+This tuple was removed using an SQL Query:
+	
+DELETE FROM [Chess_Game]
+WHERE [turns] = 0
+--1 row affected
